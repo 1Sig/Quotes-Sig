@@ -11,15 +11,13 @@ const routes = require('./routes');
 const app = express();
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/Qoutes', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((error) => {
-  console.error('Error connecting to MongoDB:', error);
-});
-
+mongoose.connect('mongodb://localhost:27017/Qoutes')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
 // Set up session middleware
 app.use(session({
   secret: 'secret',
