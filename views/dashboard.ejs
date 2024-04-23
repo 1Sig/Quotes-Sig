@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <h1>Welcome to Your Dashboard, <%= user.username %>!</h1>
+
+  <h2>Post a Quote</h2>
+  <form action="/post-quote" method="POST">
+    <textarea name="quote" rows="4" cols="50" placeholder="Enter your quote" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Your Quotes</h2>
+<!--  <ul>
+    <% user.quotes.forEach(quote => { %>
+      <li><%= quote %></li>
+    <% }); %> 
+  </ul>  -->
+</body>
+</html>
