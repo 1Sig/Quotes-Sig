@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const path = require('path');
 const User = require('./models/user');
-const { v4: uuidv4 } = require('uuid'); // Import UUID library
+const { v4: uuidv4 } = require('uuid');
 
 // Create an instance of the Express app
 const app = express();
@@ -31,6 +31,8 @@ app.set('view engine', 'ejs');
 // Set up JSON parsing for request bodies
 app.use(express.json());
 
+app.use(express.urlencoded({ extended: true }));
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,8 +48,9 @@ app.get('/login', (req, res) => {
 
 // Register route
 app.get('/register', (req, res) => {
-  res.render('register');
-});
+    const errors = []; // Define an empty array of errors
+    res.render('register', { errors });
+  });
 
 // Dashboard route
 app.get('/dashboard', (req, res) => {
@@ -62,11 +65,20 @@ app.get('/dashboard', (req, res) => {
 app.post('/register', async (req, res) => {
   try {
     const { username, password, password2 } = req.body;
-    if (!username || !password || !password2) {
-      return res.status(400).send('All fields are required');
+    console.log('Username:', username);
+    console.log('Password:', password);
+    console.log('Confirm Password:', password2);
+
+    // Check if username, password, and password2 are empty strings
+    if (!username || !password || !password2 || !username.trim() || !password.trim() || !password2.trim()) {
+      const errors = ['All fields need to be filled'];
+      return res.render('register', { errors });
     }
+
+    // Check if password and confirm password match
     if (password !== password2) {
-      return res.status(400).send('Passwords do not match.');
+      const errors = ['Passwords do not match'];
+      return res.render('register', { errors });
     }
 
     // Generate a unique user ID
@@ -79,10 +91,12 @@ app.post('/register', async (req, res) => {
     const newUser = new User({ userId, username, password: hashedPassword });
     await newUser.save();
 
+    req.session.user = newUser;
     res.redirect('/dashboard'); // Redirect to dashboard after registration
   } catch (error) {
     console.error('Error registering user:', error);
-    res.status(500).send('An error occurred while registering user.');
+    const errors = ['An error occurred while registering user'];
+    res.render('register', { errors });
   }
 });
 
@@ -108,7 +122,7 @@ app.post('/login', async (req, res) => {
 // Logout route
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/login');
+  res.redirect('/');
 });
 
 // Start the server
