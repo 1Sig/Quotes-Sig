@@ -38,20 +38,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Homepage route
+// Login route
 app.get('/', (req, res) => {
-  res.render('index');
+  const errors = []; // Define an empty array of errors
+  const user = req.session.user; // Retrieve user from session
+  res.render('index', { errors, user }); // Pass errors and user to the login.ejs template
 });
+
 
 // Login route
 app.get('/login', (req, res) => {
-  const errors = []; // Define an empty array of errors
-  res.render('login', { errors });
+  const errors = [];  // Define an empty array of errors
+  const user = req.session.user;
+  res.render('login', { errors, user});
 });
 
 // Register route
 app.get('/register', (req, res) => {
     const errors = []; // Define an empty array of errors
-    res.render('register', { errors });
+    const user = req.session.user;
+    res.render('register', { errors, user});
   });
 
 // Dashboard route
@@ -88,7 +94,9 @@ app.post('/register', async (req, res) => {
     const newUser = new User({ userId, username, password });
     await newUser.save();
 
-    req.session.user = newUser;
+    req.session.user = user.userId;
+    req.session.user = user.username;
+    console.log('User logged in:', user.password, user.userId);
     res.redirect('/dashboard'); // Redirect to dashboard after registration
   } catch (error) {
     console.error('Error registering user:', error);
@@ -138,8 +146,9 @@ app.post('/login', async (req, res) => {
     }
 
     // Store the user data in session
-    req.session.user = user;
-    console.log('User logged in:', user);
+    req.session.user = user.userId;
+    req.session.user = user.username;
+    console.log('User logged in:', user.userId, user.username);
     res.redirect('/dashboard'); // Redirect to dashboard after login
   } catch (error) {
     console.error('Error logging in user:', error);
@@ -158,10 +167,10 @@ app.get('/logout', (req, res) => {
 app.post('/post-quote', async (req, res) => {
   console.log(req.body);
   try {
-    const { text } = req.body;
+    const { quote } = req.body; // Update to use 'quote' instead of 'text'
 
     // Check if the quote text is provided
-    if (!text) {
+    if (!quote) {
       return res.status(400).json({ error: 'Quote text is required.' });
     }
 
@@ -170,7 +179,7 @@ app.post('/post-quote', async (req, res) => {
     const username = req.session.user.username; // Assuming username is stored in the session
 
     // Create a new quote document
-    const newQuote = new Quote({ userId, username, text });
+    const newQuote = new Quote({ userId, username, quote }); // Update to use 'quote' instead of 'text'
     await newQuote.save();
 
     res.status(201).json({ message: 'Quote posted successfully.', quote: newQuote });

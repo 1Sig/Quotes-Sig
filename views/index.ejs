@@ -13,7 +13,11 @@
         <ul>
             <li><a href="/"><img src="IMG/Logo.png" alt="Logo" class="nav-logo"></a></li>
             <li><a href="/dashboard" class="nav-button">Hjem</a></li> 
-            <li><a href="/login" class="nav-button">Logg inn</a></li> 
+            <% if (user) { %>
+              <li><a href="/logout" class="nav-button">Log Out</a></li>
+            <% } else { %>
+              <li><a href="/login" class="nav-button">Log In</a></li>
+            <% } %> 
         </ul>
     </nav>
 

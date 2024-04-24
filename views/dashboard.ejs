@@ -11,15 +11,19 @@
     <ul>
       <li><a href="/"><img src="IMG/Logo.png" alt="Logo" class="nav-logo"></a></li>
       <li><a href="/dashboard" class="nav-button">Home - <%= user.username %></a></li>
-      <li><a href="/logout" class="nav-button">Logout</a></li>
-    </ul>
+      <% if (user) { %>
+        <li><a href="/logout" class="nav-button">Log Out</a></li>
+      <% } else { %>
+        <li><a href="/login" class="nav-button">Log In</a></li>
+      <% } %>
+      </ul>
   </nav>
 
   <h1>Welcome to Your Dashboard, <%= user.username %>!</h1>
 
   <h2>Post a Quote</h2>
   <form action="/post-quote" method="POST">
-    <textarea name="quote" rows="4" cols="50" placeholder="Enter your quote" required></textarea>
+    <input type="text" name="quote" placeholder="Enter your quote" required>
     <button type="submit">Submit</button>
 </form>
 

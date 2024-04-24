@@ -11,7 +11,7 @@ const quoteSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    text: {
+    qoute: {
         type: String,
         required: true,
         maxlength: 100
