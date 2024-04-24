@@ -43,7 +43,8 @@ app.get('/', (req, res) => {
 
 // Login route
 app.get('/login', (req, res) => {
-  res.render('login');
+  const errors = []; // Define an empty array of errors
+  res.render('login', { errors });
 });
 
 // Register route
@@ -58,6 +59,7 @@ app.get('/dashboard', (req, res) => {
   if (!user) {
     return res.redirect('/login');
   }
+  console.log('User in session:', user); // Add this line for logging
   res.render('dashboard', { user });
 });
 
@@ -65,9 +67,6 @@ app.get('/dashboard', (req, res) => {
 app.post('/register', async (req, res) => {
   try {
     const { username, password, password2 } = req.body;
-    console.log('Username:', username);
-    console.log('Password:', password);
-    console.log('Confirm Password:', password2);
 
     // Check if username, password, and password2 are empty strings
     if (!username || !password || !password2 || !username.trim() || !password.trim() || !password2.trim()) {
@@ -84,11 +83,8 @@ app.post('/register', async (req, res) => {
     // Generate a unique user ID
     const userId = uuidv4();
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new user document in MongoDB
-    const newUser = new User({ userId, username, password: hashedPassword });
+    // Create a new user document in MongoDB without hashing the password
+    const newUser = new User({ userId, username, password });
     await newUser.save();
 
     req.session.user = newUser;
@@ -104,20 +100,53 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    // Log the form fields
+    console.log('Username:', username);
+    console.log('Password:', password);
+
+    // Check if username and password are provided
+    if (!username || !password) {
+      const errors = ['Username and password are required'];
+      return res.render('login', { errors });
+    }
+
+    // Find the user by username
     const user = await User.findOne({ username });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).send('Invalid username or password');
+    // Log the user query
+    console.log('User query:', user);
+
+    // Ensure the user object exists
+    if (!user) {
+    console.log('User not found.');
+    // Log the user object to check if it's being retrieved correctly
+    console.log('User query:', user);
+    const errors = ['Invalid username'];
+    return res.render('login', { errors });
+    }
+
+    // Log the password retrieved from the database
+    console.log('Password from database:', user.password);
+
+    // Check if password is correct
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+    const errors = ['Invalid username or password'];
+    return res.render('login', { errors });
     }
 
     // Store the user data in session
     req.session.user = user;
+    console.log('User logged in:', user);
     res.redirect('/dashboard'); // Redirect to dashboard after login
   } catch (error) {
     console.error('Error logging in user:', error);
-    res.status(500).send('An error occurred while logging in user.');
+    const errors = ['An error occurred while logging in user.']; // Define an array of errors
+    res.render('login', { errors });
   }
 });
+
 
 // Logout route
 app.get('/logout', (req, res) => {

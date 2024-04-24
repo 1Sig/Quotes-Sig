@@ -21,23 +21,22 @@ const userSchema = new mongoose.Schema({
 
 // Hash the password before saving the user
 userSchema.pre('save', async function(next) {
-    try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(this.password, salt);
-        this.password = hashedPassword;
-        next();
-    } catch (error) {
-        next(error);
-    }
+  try {
+      const hashedPassword = await bcrypt.hash(this.password, 10); // No explicit salt
+      this.password = hashedPassword;
+      next();
+  } catch (error) {
+      next(error);
+  }
 });
 
 // Define a method to compare passwords
 userSchema.methods.comparePassword = async function(candidatePassword) {
-    try {
-        return await bcrypt.compare(candidatePassword, this.password);
-    } catch (error) {
-        throw new Error(error);
-    }
+  try {
+      return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+      throw new Error(error);
+  }
 };
 
 // Define a model for the user schema
