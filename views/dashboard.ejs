@@ -16,18 +16,29 @@
       <% } else { %>
         <li><a href="/login" class="nav-button">Log In</a></li>
       <% } %>
-      </ul>
+    </ul>
   </nav>
 
-  <h1>Welcome to Your Dashboard, <%= user.username %>!</h1>
+  <div class="container"> 
+    <h1>Welcome to Your Dashboard, <%= user.username %>!</h1>
 
-  <h2>Post a Quote</h2>
-  <form action="/post-quote" method="POST">
-    <input type="text" name="quote" placeholder="Enter your quote" required>
-    <button type="submit">Submit</button>
-</form>
+    <h2>Post a Quote</h2>
+    <form action="/post-quote" method="POST">
+      <input type="text" name="quote" placeholder="Enter your quote" required>
+      <button type="submit">Submit</button>
+    </form>
 
-  <h2>Your Quotes</h2>
-
+    <!-- Display quotes -->
+    <% if (quotes.length > 0) { %>
+      <h2>Your Quotes</h2>
+      <ul>
+        <% quotes.forEach(quote => { %>
+          <li><%= quote.quote %></li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>No quotes posted yet.</p>
+    <% } %>
+  </div> 
 </body>
 </html>

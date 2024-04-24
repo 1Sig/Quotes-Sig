@@ -42,14 +42,13 @@ nav ul li a:hover {
 nav .nav-logo {
     width: 50px; /* Set width of logo */
     height: auto;
-    background: transparent;
 }
 
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 0 20px;
-}
+    max-width: 800px; /* Adjust as needed */
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 0 20px; /* Add spacing on the sides */
+  }
 
 form {
     margin-bottom: 20px;
