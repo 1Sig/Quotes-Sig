@@ -38,14 +38,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Homepage route
-// Login route
-app.get('/', (req, res) => {
-  const errors = []; // Define an empty array of errors
-  const user = req.session.user; // Retrieve user from session
-  res.render('index', { errors, user }); // Pass errors and user to the login.ejs template
+app.get('/', async (req, res) => {
+  try {
+    // Fetch a random quote from the database
+    const randomQuote = await Quote.aggregate([{ $sample: { size: 1 } }]);
+    const quoteText = randomQuote.length > 0 ? randomQuote[0].quote : "No quotes available";
+
+    // Get user information from session
+    const user = req.session.user;
+
+    // Render the homepage template with the random quote and user information
+    res.render('index', { quote: quoteText, user: user });
+  } catch (error) {
+    console.error('Error fetching random quote:', error);
+    // If an error occurs, render the homepage template without a quote
+    res.render('index', { quote: "Failed to fetch quote", user: null });
+  }
 });
-
-
 // Login route
 app.get('/login', (req, res) => {
   const errors = [];  // Define an empty array of errors

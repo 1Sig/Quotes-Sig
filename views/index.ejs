@@ -12,7 +12,7 @@
     <nav>
         <ul>
             <li><a href="/"><img src="IMG/Logo.png" alt="Logo" class="nav-logo"></a></li>
-            <li><a href="/dashboard" class="nav-button">Hjem</a></li> 
+            <li><a href="/dashboard" class="nav-button">Quote</a></li> 
             <% if (user) { %>
               <li><a href="/logout" class="nav-button">Log Out</a></li>
             <% } else { %>
@@ -22,10 +22,11 @@
     </nav>
 
     <div class="container">
-    <h1>Welcome to the Home Page</h1>
-    <p>This is the home page of your application.</p>
-    <p>Feel free to navigate to other pages using the links provided.</p>
+       <!-- Display a random quote -->
+       <h2>Random Quote:</h2>
+       <blockquote><%= quote %></blockquote>
     </div>
+   
 </body>
 </html>
 
