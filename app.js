@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const path = require('path');
 const User = require('./models/user');
+const Quote = require('./models/quote');
 const { v4: uuidv4 } = require('uuid');
 
 // Create an instance of the Express app
@@ -147,11 +148,36 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
 // Logout route
 app.get('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/');
+});
+
+// Quote posting route
+app.post('/post-quote', async (req, res) => {
+  console.log(req.body);
+  try {
+    const { text } = req.body;
+
+    // Check if the quote text is provided
+    if (!text) {
+      return res.status(400).json({ error: 'Quote text is required.' });
+    }
+
+    // Retrieve user information from the session or any other means
+    const userId = req.session.user.userId; // Assuming userId is stored in the session
+    const username = req.session.user.username; // Assuming username is stored in the session
+
+    // Create a new quote document
+    const newQuote = new Quote({ userId, username, text });
+    await newQuote.save();
+
+    res.status(201).json({ message: 'Quote posted successfully.', quote: newQuote });
+  } catch (error) {
+    console.error('Error posting quote:', error);
+    res.status(500).json({ error: 'An error occurred while posting the quote.' });
+  }
 });
 
 // Start the server

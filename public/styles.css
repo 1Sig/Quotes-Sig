@@ -42,6 +42,7 @@ nav ul li a:hover {
 nav .nav-logo {
     width: 50px; /* Set width of logo */
     height: auto;
+    background: transparent;
 }
 
 .container {
