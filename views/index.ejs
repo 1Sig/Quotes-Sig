@@ -21,11 +21,13 @@
         </ul>
     </nav>
 
-    <div class="container">
-       <!-- Display a random quote -->
-       <h2>Random Quote:</h2>
-       <blockquote><%= quote %></blockquote>
-    </div>
+    <div c    <div class="container">
+      <!-- Display a random quote -->
+      <h2>Random Quote:</h2>
+      <blockquote><%= quote %></blockquote>
+      <!-- Display the username of the person who posted the quote -->
+      <p>Posted by: <%= quote.username %></p>
+   </div>
    
 </body>
 </html>
